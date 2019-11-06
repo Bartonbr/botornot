@@ -2,24 +2,12 @@ import pandas as pd
 import numpy as np
 
 
-def generate_features(accounts_csv_path, bids_csv_path):
-    raw_data = pd.read_csv(accounts_csv_path)
-    bids_data = pd.read_csv(bids_csv_path)
+def generate_features(data, transforms):
+    agg_data = data['bidder_id']
 
-    joined_data = pd.merge(raw_data, bids_data, on='bidder_id')
-
-    features = [get_total_bids,
-                get_avg_bids,
-                get_unique_devices,
-                get_unique_countries,
-                get_unique_ips,
-                get_avg_time_between_bids,
-                get_avg_counterbid_times]
-
-    agg_data = raw_data
-
-    for feature in features:
-        agg_data = pd.merge(agg_data, feature(joined_data), on='bidder_id')
+    for index, transform in enumerate(transforms):
+        print("Generating feature ", index+1, " of ", len(transforms))
+        agg_data = pd.merge(agg_data, transform(data), on='bidder_id')
 
     return agg_data
 
@@ -45,7 +33,7 @@ def get_unique_devices(joined_data):
 
 def get_unique_countries(joined_data):
     grouped_bidder = joined_data.groupby('bidder_id')
-    unique_countries = grouped_bidder.country.nunique().reset_index(name='country')
+    unique_countries = grouped_bidder.country.nunique().reset_index(name='unique_countries')
     return unique_countries
 
 

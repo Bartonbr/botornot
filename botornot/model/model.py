@@ -9,4 +9,4 @@ def bot_or_not():
         'min_samples_split': [2, 4, 10],
         'min_samples_leaf': [1, 2, 4, 10],
         'class_weight': ['balanced']}
-    return GridSearchCV(RandomForestClassifier(), parameters, cv=10)
+    return GridSearchCV(RandomForestClassifier(), parameters, cv=10, verbose=2)
