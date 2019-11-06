@@ -19,13 +19,7 @@ def build_data(data):
                               fe.get_avg_counterbid_times,
                               fe.get_unique_countries]
 
-    generated_features = fe.generate_features(data, engineering_transforms)
-
-    # save to disk temporarily and re-read in chunks to solve memory issues
-    generated_features.to_csv("../temp/features.csv", index_label=False, mode='w+')
-    del generated_features
-
-    features = pd.read_csv("../temp/features.csv", chunksize=1000)
+    features = fe.generate_features(data, engineering_transforms)
 
     features_and_outcomes = pd.merge(features, data[['bidder_id', 'outcome']], on='bidder_id')
     features_y = features_and_outcomes['outcome']
